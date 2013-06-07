@@ -14,230 +14,197 @@ import java.util.List;
  * Created on Oct 18, 2005
  * @author Dave
  */
-public final class SimpleTableFormatter extends AbstractTableFormatter implements TableFormatter
-{
-	private boolean border = false;
+public final class SimpleTableFormatter extends AbstractTableFormatter implements TableFormatter {
 
-	/**
-	 * Constructor
-	 */
-	public SimpleTableFormatter()
-	{
-		super();
-	}
+    private boolean border = false;
 
-	/**
-	 * Constructor
-	 * @param border Print rows/tables with borders
-	 */
-	public SimpleTableFormatter(boolean border)
-	{
-		this();
+    /**
+     * Constructor
+     */
+    public SimpleTableFormatter() {
+        super();
+    }
 
-		this.border = border;
-	}
+    /**
+     * Constructor
+     *
+     * @param border Print rows/tables with borders
+     */
+    public SimpleTableFormatter(boolean border) {
+        this();
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.inamik.utils.TableFormatter#getTableWidth()
-	 */
-	public int getTableWidth()
-	{
-		int width = super.getTableWidth();
+        this.border = border;
+    }
 
-		if (border == true)
-		{
-			width += 2;
+    /*
+     * (non-Javadoc)
+     * @see com.inamik.utils.TableFormatter#getTableWidth()
+     */
+    public int getTableWidth() {
+        int width = super.getTableWidth();
 
-			if (getColumnCount() > 1)
-			{
-				width += getColumnCount() - 1;
-			}
-		}
+        if (border == true) {
+            width += 2;
 
-		return width;
-	}
+            if (getColumnCount() > 1) {
+                width += getColumnCount() - 1;
+            }
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.inamik.utils.TableFormatter#getTableHeight()
-	 */
-	public int getTableHeight()
-	{
-		int height = super.getTableHeight();
+        return width;
+    }
 
-		if (border == true)
-		{
-			height += 2;
+    /*
+     * (non-Javadoc)
+     * @see com.inamik.utils.TableFormatter#getTableHeight()
+     */
+    public int getTableHeight() {
+        int height = super.getTableHeight();
 
-			if (getRowCount() > 1)
-			{
-				height += getRowCount() - 1;
-			}
-		}
+        if (border == true) {
+            height += 2;
 
-		return height;
-	}
+            if (getRowCount() > 1) {
+                height += getRowCount() - 1;
+            }
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.inamik.utils.TableFormatter#getFormattedRow(int)
-	 */
-	public String[] getFormattedRow(int rowIndex)
-	{
-		if (rowIndex < 0 || rowIndex >= getRowCount())
-		{
-			throw new IllegalArgumentException("rowIndex");
-		}
+        return height;
+    }
 
-		int cellHeight = getRowHeight(rowIndex);
+    /*
+     * (non-Javadoc)
+     * @see com.inamik.utils.TableFormatter#getFormattedRow(int)
+     */
+    public String[] getFormattedRow(int rowIndex) {
+        if (rowIndex < 0 || rowIndex >= getRowCount()) {
+            throw new IllegalArgumentException("rowIndex");
+        }
 
-		List rowLines = new ArrayList(cellHeight);
+        int cellHeight = getRowHeight(rowIndex);
 
-		for (int i = 0; i < cellHeight; ++i)
-		{
-			StringBuffer buffer = new StringBuffer();
+        List<StringBuilder> rowLines = new ArrayList<> (cellHeight);
 
-			if (border == true)
-			{
-				buffer.append('|');
-			}
+        for (int i = 0; i < cellHeight; ++i) {
+            StringBuilder buffer = new StringBuilder();
 
-			rowLines.add(buffer);
-		}
+            if (border == true) {
+                buffer.append('|');
+            }
 
-		if (rowLines.size() != cellHeight)
-		{
-			throw new IllegalStateException("rowLines.size()");
-		}
+            rowLines.add(buffer);
+        }
 
-		for (int columnIndex = 0, columnCount = getColumnCount(); columnIndex < columnCount; ++columnIndex)
-		{
-			String[] cell = getFormattedCell(rowIndex, columnIndex);
+        if (rowLines.size() != cellHeight) {
+            throw new IllegalStateException("rowLines.size()");
+        }
 
-			if (cell.length != cellHeight)
-			{
-				throw new IllegalStateException("cell.size()");
-			}
+        for (int columnIndex = 0, columnCount = getColumnCount(); columnIndex < columnCount; ++columnIndex) {
+            String[] cell = getFormattedCell(rowIndex, columnIndex);
 
-			for (int i = 0; i < cellHeight; ++i)
-			{
-				StringBuffer buffer = (StringBuffer)rowLines.get(i);
+            if (cell.length != cellHeight) {
+                throw new IllegalStateException("cell.size()");
+            }
 
-				if (columnIndex > 0)
-				{
-					if (border == true)
-					{
-						buffer.append('|');
-					}
+            for (int i = 0; i < cellHeight; ++i) {
+                StringBuilder buffer = rowLines.get(i);
+
+                if (columnIndex > 0) {
+                    if (border == true) {
+                        buffer.append('|');
+                    }
 //					else
 //					{
 //						buffer.append(' ');
 //					}
-				}
+                }
 
-				buffer.append(cell[i]);
-			}
-		}
+                buffer.append(cell[i]);
+            }
+        }
 
-		if (border == true)
-		{
-			for (int i = 0; i < cellHeight; ++i)
-			{
-				StringBuffer buffer = (StringBuffer)rowLines.get(i);
+        if (border == true) {
+            for (int i = 0; i < cellHeight; ++i) {
+                StringBuilder buffer = rowLines.get(i);
 
-				buffer.append('|');
-			}
-		}
+                buffer.append('|');
+            }
+        }
 
-		if (rowLines.size() != cellHeight)
-		{
-			throw new IllegalStateException("rowLines.size()");
-		}
+        if (rowLines.size() != cellHeight) {
+            throw new IllegalStateException("rowLines.size()");
+        }
 
-		List result = new ArrayList(cellHeight);
+        List<String> result = new ArrayList<>(cellHeight);
 
-		for (int i = 0; i < cellHeight; ++i)
-		{
-			StringBuffer buffer = (StringBuffer)rowLines.get(i);
+        for (int i = 0; i < cellHeight; ++i) {
+            StringBuilder buffer = rowLines.get(i);
 
-			result.add(buffer.toString());
-		}
+            result.add(buffer.toString());
+        }
 
-		if (result.size() != cellHeight)
-		{
-			throw new IllegalStateException("result.size()");
-		}
+        if (result.size() != cellHeight) {
+            throw new IllegalStateException("result.size()");
+        }
 
-		return (String[])result.toArray(new String[result.size()]);
-	}
+        return result.toArray(new String[result.size()]);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.inamik.utils.TableFormatter#getFormattedTable()
-	 */
-	public String[] getFormattedTable()
-	{
-		List result = new ArrayList();
+    /*
+     * (non-Javadoc)
+     * @see com.inamik.utils.TableFormatter#getFormattedTable()
+     */
+    public String[] getFormattedTable() {
+        List<String> result = new ArrayList<> ();
 
-		String borderText = null;
+        String borderText = null;
 
-		if (border == true)
-		{
-			borderText = getFormattedBorder();
-			result.add(borderText);
-		}
+        if (border == true) {
+            borderText = getFormattedBorder();
+            result.add(borderText);
+        }
 
-		for (int rowIndex = 0, rowCount = getRowCount(); rowIndex < rowCount; ++rowIndex)
-		{
-			if (rowIndex > 0)
-			{
-				if (border == true)
-				{
-					result.add(borderText);
-				}
-			}
+        for (int rowIndex = 0, rowCount = getRowCount(); rowIndex < rowCount; ++rowIndex) {
+            if (rowIndex > 0) {
+                if (border == true) {
+                    result.add(borderText);
+                }
+            }
 
-			String[] row = getFormattedRow(rowIndex);
+            String[] row = getFormattedRow(rowIndex);
 
-			for (int i = 0, size=row.length; i < size; ++i)
-			{
-				result.add(row[i]);
-			}
-		}
+            for (int i = 0, size = row.length; i < size; ++i) {
+                result.add(row[i]);
+            }
+        }
 
-		if (border == true)
-		{
-			result.add(borderText);
-		}
+        if (border == true) {
+            result.add(borderText);
+        }
 
-		return (String[])result.toArray(new String[result.size()]);
-	}
+        return result.toArray(new String[result.size()]);
+    }
 
-	/**
-	 * getFormattedBorder
-	 */
-	private String getFormattedBorder()
-	{
-		StringBuffer result = new StringBuffer();
+    /**
+     * getFormattedBorder
+     */
+    private String getFormattedBorder() {
+        StringBuilder result = new StringBuilder();
 
-		result.append('+');
+        result.append('+');
 
-		for (int columnIndex = 0, columnCount = getColumnCount(); columnIndex < columnCount; ++columnIndex)
-		{
-			if (columnIndex > 0)
-			{
-				result.append('+');
-			}
+        for (int columnIndex = 0, columnCount = getColumnCount(); columnIndex < columnCount; ++columnIndex) {
+            if (columnIndex > 0) {
+                result.append('+');
+            }
 
-			for (int i = 0; i < getColumnWidth(columnIndex); ++i)
-			{
-				result.append('-');
-			}
-		}
+            for (int i = 0; i < getColumnWidth(columnIndex); ++i) {
+                result.append('-');
+            }
+        }
 
-		result.append('+');
+        result.append('+');
 
-		return result.toString();
-	}
+        return result.toString();
+    }
 }
